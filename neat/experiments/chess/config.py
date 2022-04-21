@@ -17,7 +17,7 @@ class ChessConfig:
     NUM_OUTPUTS = 1
     USE_BIAS = True
 
-    ACTIVATION = 'tanh'
+    ACTIVATION = 'sigmoid'
     SCALE_ACTIVATION = 4.9
 
     FITNESS_THRESHOLD = 1970
@@ -37,7 +37,7 @@ class ChessConfig:
     PERCENTAGE_TO_SAVE = 0.30
     print("loading chess data")
     print(DEVICE)
-    with open("./data/KQK/indices", "rb") as f: 
+    with open("../data/KQK/indices", "rb") as f:
         tensors = pickle.load(f)
         # print(tensors)
     inputs_list = []
@@ -51,7 +51,7 @@ class ChessConfig:
         outputs_list.append(tensor[1])
 
     inputs = list(map(lambda s: autograd.Variable(torch.Tensor([s])), inputs_list))
-    
+
     targets = list(map(lambda s: autograd.Variable(torch.Tensor([s])), outputs_list))
 
     def fitness_fn(self, genome):
