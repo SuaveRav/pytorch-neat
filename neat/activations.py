@@ -11,6 +11,10 @@ def tanh(x):
     return torch.tanh(x)
 
 
+def relu(x):
+    return torch.relu(x)
+
+
 class Activations:
 
     def __init__(self):
