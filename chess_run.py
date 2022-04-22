@@ -18,7 +18,7 @@ avg_num_generations = 0
 min_num_generations = 100000
 
 
-for i in tqdm(range(1)):
+for i in tqdm(range(3)):
     neat = pop.Population(c.ChessConfig)
     solution, generation = neat.run()
 
