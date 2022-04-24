@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class ChessConfig:
     DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    # DEVICE = "cuda:0"
+    # DEVICE = "cpu"
     print(f"device: {DEVICE}")
     np_rng = np.random.default_rng(13)
     VERBOSE = True
@@ -22,18 +22,18 @@ class ChessConfig:
     NUM_OUTPUTS = 1
     USE_BIAS = True
 
-    ACTIVATION = 'sigmoid'
+    ACTIVATION = 'tanh'
     SCALE_ACTIVATION = 4.9
 
-    FITNESS_THRESHOLD = 1970
+    FITNESS_THRESHOLD = 1470
 
     POPULATION_SIZE = 150
-    NUMBER_OF_GENERATIONS = 150
+    NUMBER_OF_GENERATIONS = 30
     SPECIATION_THRESHOLD = 3.0
 
     CONNECTION_MUTATION_RATE = 0.80
     CONNECTION_PERTURBATION_RATE = 0.90
-    ADD_NODE_MUTATION_RATE = 0.03
+    ADD_NODE_MUTATION_RATE = 0.1
     ADD_CONNECTION_MUTATION_RATE = 0.5
 
     CROSSOVER_REENABLE_CONNECTION_GENE_RATE = 0.25
@@ -42,17 +42,18 @@ class ChessConfig:
     PERCENTAGE_TO_SAVE = 0.30
 
     print("loading chess data")
-    with open("../data/KQK/indices", "rb") as f:
+    with open("../data/KPK/indices", "rb") as f:
         data = pickle.load(f)
 
     inputs_list = []
     outputs_list = []
     np_rng.shuffle(data)
-    data_proportion = int(np.sqrt(len(data)))
+    # data_proportion = int(np.sqrt(len(data)))
+    data_proportion = 2000
     data = data[:data_proportion]
     for xy in data:
         # xy[0] should already be a numpy array
-        inputs_list.append(xy[0])
+        inputs_list.append(xy[0] / 8)
         outputs_list.append(xy[1])
 
     inputs = list(map(lambda s: autograd.Variable(torch.Tensor([s])), inputs_list))
@@ -61,7 +62,7 @@ class ChessConfig:
 
 
     def fitness_fn(self, genome):
-        fitness = 2000  # Max fitness for XOR
+        fitness = 2000  # Max fitness
 
         phenotype = FeedForwardNet(genome, self)
         phenotype.to(self.DEVICE)
@@ -72,9 +73,9 @@ class ChessConfig:
             input, target = input.to(self.DEVICE), target.to(self.DEVICE)
 
             pred = phenotype(input)
-            # loss = (float(pred) - float(target)) ** 2
-            # loss = float(loss)
-            loss = criterion(pred, target)
+            loss = (float(pred) - float(target)) ** 2
+            loss = float(loss)
+            # loss = criterion(pred, target)
             # logger.info("Loss: {}".format(loss))
             fitness -= loss
             # logger.info("Fitness: {}".format(fitness))
