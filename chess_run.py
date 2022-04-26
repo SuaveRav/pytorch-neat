@@ -1,4 +1,6 @@
 import logging
+import os
+import json
 
 import neat.population as pop
 import neat.experiments.chess.config as c
@@ -17,12 +19,18 @@ found_minimal_solution = 0
 avg_num_generations = 0
 min_num_generations = 100000
 
+experiment_folders = os.listdir("./images")
+previous_experiment = int(experiment_folders[-1])
+new_experiment = previous_experiment + 1
+directory = './images/{0}'.format(new_experiment)
 
+print("Running Experiment {}".format(new_experiment))
 for i in tqdm(range(1)):
     neat = pop.Population(c.ChessConfig)
     solution, generation = neat.run()
 
     if solution is not None:
+        os.mkdir(directory)
         avg_num_generations = ((avg_num_generations * num_of_solutions) + generation) / (num_of_solutions + 1)
         min_num_generations = min(generation, min_num_generations)
 
@@ -34,7 +42,10 @@ for i in tqdm(range(1)):
             found_minimal_solution += 1
 
         num_of_solutions += 1
-        draw_net(solution, view=True, filename='./images/solution-' + str(num_of_solutions), show_disabled=True)
+        draw_net(solution, view=True, filename='./images/{0}/solution-{1}'.format(new_experiment, str(num_of_solutions)), show_disabled=True)
+        with open('./images/{0}/solution'.format(new_experiment), 'w') as convert_file:
+         convert_file.write(str(solution))
+
         logger.info("Solution: {}".format(solution))
         logger.info("Generation: {}".format(generation))
 
