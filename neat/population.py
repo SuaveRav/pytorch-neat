@@ -26,6 +26,7 @@ class Population:
             self.speciate(genome, 0)
 
     def run(self):
+        generation_stats = []
         for generation in range(1, self.Config.NUMBER_OF_GENERATIONS):
             # Get Fitness of Every Genome
             for genome in self.population:
@@ -94,8 +95,8 @@ class Population:
             for genome in self.population:
                 self.speciate(genome, generation)
 
-            if best_genome.fitness >= self.Config.FITNESS_THRESHOLD:
-                return best_genome, generation
+            generation_stats.append((generation, best_genome.fitness, len(best_genome.connection_genes)))
+
 
             # Generation Stats
             if self.Config.VERBOSE:
@@ -103,7 +104,10 @@ class Population:
                 logger.info(f'Best Genome Fitness: {best_genome.fitness}')
                 logger.info(f'Best Genome Length {len(best_genome.connection_genes)}\n')
 
-        return None, None
+            if best_genome.fitness >= self.Config.FITNESS_THRESHOLD:
+                return best_genome, generation, generation_stats
+
+        return best_genome, generation, generation_stats
 
     def speciate(self, genome, generation):
         """
