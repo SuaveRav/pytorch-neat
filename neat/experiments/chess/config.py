@@ -22,7 +22,7 @@ class ChessConfig:
     NUM_OUTPUTS = 1
     USE_BIAS = True
 
-    ACTIVATION = 'relu'
+    ACTIVATION = 'wann (sigmoid, tanh, relu, tanhshrink, logsigmoid, negate)'
     SCALE_ACTIVATION = 1
 
     FITNESS_THRESHOLD = 1950
@@ -33,6 +33,7 @@ class ChessConfig:
 
     CONNECTION_MUTATION_RATE = 0.80
     CONNECTION_PERTURBATION_RATE = 0.90
+    ACTIVATION_MUTATION_RATE = 0.2
     ADD_NODE_MUTATION_RATE = 0.2
     ADD_CONNECTION_MUTATION_RATE = 0.6
 

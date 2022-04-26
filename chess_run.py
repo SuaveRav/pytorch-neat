@@ -51,6 +51,7 @@ for i in tqdm(range(1)):
                     f'Speciation Threshold: {c.ChessConfig.SPECIATION_THRESHOLD}\n',
                     f'Connection Mutation Rate: {c.ChessConfig.CONNECTION_MUTATION_RATE}\n',
                     f'Connection Perturbation Rate: {c.ChessConfig.CONNECTION_PERTURBATION_RATE}\n',
+                    f'Activation Mutation Rate: {c.ChessConfig.ACTIVATION_MUTATION_RATE}\n',
                     f'Add Node Mutation Rate: {c.ChessConfig.ADD_NODE_MUTATION_RATE}\n',
                     f'Add Connection Mutation Rate: {c.ChessConfig.ADD_CONNECTION_MUTATION_RATE}\n',
                     f'Crossover Reenable Connection Gene Rate: {c.ChessConfig.CROSSOVER_REENABLE_CONNECTION_GENE_RATE}\n',
