@@ -110,7 +110,7 @@ class Population:
                 logger.info(f'Best Genome Fitness: {best_genome.fitness}')
                 logger.info(f'Best Genome Length {len(best_genome.connection_genes)}\n')
 
-        return None, None
+        return None, None, None
 
     def speciate(self, genome, generation):
         """
