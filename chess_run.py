@@ -34,6 +34,7 @@ for i in tqdm(range(1)):
     solution, generation, fitnesses = neat.run()
 
     if solution is not None:
+        os.mkdir(directory)
         avg_num_generations = ((avg_num_generations * num_of_solutions) + generation) / (num_of_solutions + 1)
         min_num_generations = min(generation, min_num_generations)
 
@@ -45,13 +46,13 @@ for i in tqdm(range(1)):
             found_minimal_solution += 1
 
         num_of_solutions += 1
-        draw_net(solution, view=True, filename='./images/solution-' + str(num_of_solutions), show_disabled=True)
+        draw_net(solution, view=True, filename='./images/{0}/solution-'.format(new_experiment) + str(num_of_solutions), show_disabled=True)
         with open('./images/{0}/solution'.format(new_experiment), 'w') as convert_file:
             convert_file.write(str(solution))
         with open('./images/{0}/fitnesses'.format(new_experiment), 'w') as convert_file:
             convert_file.write(json.dumps(fitnesses))
-    logger.info("Solution: {}".format(solution))
-    logger.info("Generation: {}".format(generation))
+        logger.info("Solution: {}".format(solution))
+        logger.info("Generation: {}".format(generation))
 
 logger.info('Total Number of Solutions: {}'.format(num_of_solutions))
 logger.info('Average Number of Hidden Nodes in a Solution {}'.format(avg_num_hidden_nodes))
