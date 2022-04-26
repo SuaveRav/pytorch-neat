@@ -24,10 +24,14 @@ previous_experiment = int(experiment_folders[-1])
 new_experiment = previous_experiment + 1
 directory = './images/{0}'.format(new_experiment)
 
+fitnesses = []
+def callback_func(fitness):
+    fitnesses.append(fitness)
+    
 print("Running Experiment {}".format(new_experiment))
 for i in tqdm(range(1)):
     neat = pop.Population(c.ChessConfig)
-    solution, generation = neat.run()
+    solution, generation, fitnesses = neat.run()
 
     if solution is not None:
         os.mkdir(directory)
@@ -44,8 +48,9 @@ for i in tqdm(range(1)):
         num_of_solutions += 1
         draw_net(solution, view=True, filename='./images/{0}/solution-{1}'.format(new_experiment, str(num_of_solutions)), show_disabled=True)
         with open('./images/{0}/solution'.format(new_experiment), 'w') as convert_file:
-         convert_file.write(str(solution))
-
+            convert_file.write(str(solution))
+        with open('./images/{0}/fitnesses'.format(new_experiment), 'w') as convert_file:
+            convert_file.write(json.dumps(fitnesses))          
         logger.info("Solution: {}".format(solution))
         logger.info("Generation: {}".format(generation))
 
