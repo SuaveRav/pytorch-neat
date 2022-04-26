@@ -22,10 +22,10 @@ class ChessConfig:
     NUM_OUTPUTS = 1
     USE_BIAS = True
 
-    ACTIVATION = 'tanh'
-    SCALE_ACTIVATION = 4.9
+    ACTIVATION = 'relu'
+    SCALE_ACTIVATION = 1
 
-    FITNESS_THRESHOLD = 1470
+    FITNESS_THRESHOLD = 2000
 
     POPULATION_SIZE = 150
     NUMBER_OF_GENERATIONS = 30
@@ -33,6 +33,7 @@ class ChessConfig:
 
     CONNECTION_MUTATION_RATE = 0.80
     CONNECTION_PERTURBATION_RATE = 0.90
+    ACTIVATION_MUTATION_RATE = 0.2
     ADD_NODE_MUTATION_RATE = 0.1
     ADD_CONNECTION_MUTATION_RATE = 0.5
 
@@ -73,6 +74,7 @@ class ChessConfig:
             input, target = input.to(self.DEVICE), target.to(self.DEVICE)
 
             pred = phenotype(input)
+            # breakpoint()
             loss = (float(pred) - float(target)) ** 2
             loss = float(loss)
             # loss = criterion(pred, target)
