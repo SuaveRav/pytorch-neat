@@ -1,4 +1,6 @@
 import logging
+import os
+import json
 
 import neat.population as pop
 import neat.experiments.chess.config as c
@@ -17,10 +19,19 @@ found_minimal_solution = 0
 avg_num_generations = 0
 min_num_generations = 100000
 
+experiment_folders = os.listdir("./images")
+previous_experiment = int(experiment_folders[-1])
+new_experiment = previous_experiment + 1
+directory = './images/{0}'.format(new_experiment)
 
+fitnesses = []
+def callback_func(fitness):
+    fitnesses.append(fitness)
+
+print("Running Experiment {}".format(new_experiment))
 for i in tqdm(range(1)):
     neat = pop.Population(c.ChessConfig)
-    solution, generation = neat.run()
+    solution, generation, fitnesses = neat.run()
 
     if solution is not None:
         avg_num_generations = ((avg_num_generations * num_of_solutions) + generation) / (num_of_solutions + 1)
@@ -35,8 +46,12 @@ for i in tqdm(range(1)):
 
         num_of_solutions += 1
         draw_net(solution, view=True, filename='./images/solution-' + str(num_of_solutions), show_disabled=True)
-        logger.info("Solution: {}".format(solution))
-        logger.info("Generation: {}".format(generation))
+        with open('./images/{0}/solution'.format(new_experiment), 'w') as convert_file:
+            convert_file.write(str(solution))
+        with open('./images/{0}/fitnesses'.format(new_experiment), 'w') as convert_file:
+            convert_file.write(json.dumps(fitnesses))
+    logger.info("Solution: {}".format(solution))
+    logger.info("Generation: {}".format(generation))
 
 logger.info('Total Number of Solutions: {}'.format(num_of_solutions))
 logger.info('Average Number of Hidden Nodes in a Solution {}'.format(avg_num_hidden_nodes))
