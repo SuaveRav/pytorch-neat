@@ -1,10 +1,13 @@
-import torch
 import logging
-import torch.nn as nn
 import pickle
+
 import numpy as np
+import torch
+import torch.nn as nn
 from torch import autograd
+
 from neat.phenotype.feed_forward import FeedForwardNet
+
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +62,7 @@ class ChessConfig:
     inputs = list(map(lambda s: autograd.Variable(torch.Tensor([s])), inputs_list))
     targets = list(map(lambda s: autograd.Variable(torch.Tensor([s])), outputs_list))
 
+
     def fitness_fn(self, genome):
         fitness = 2000  # Max fitness
 
@@ -66,20 +70,20 @@ class ChessConfig:
         phenotype.to(self.DEVICE)
         criterion = nn.MSELoss()
         num_inputs = len(self.inputs)
-        for input, target in zip(self.inputs, self.targets):  # 4 training examples
+
+        for input, target in zip(self.inputs, self.targets):
             input, target = input.to(self.DEVICE), target.to(self.DEVICE)
 
             pred = phenotype(input)
-
             loss = (float(pred) - float(target)) ** 2
             loss = float(loss)
             # loss = criterion(pred, target)
             # logger.info("Loss: {}".format(loss))
             fitness -= loss
             # logger.info("Fitness: {}".format(fitness))
-        # fitness = fitness / num_inputs
-        # logger.info("Fitness: {}".format(fitness))
+
         return fitness
+
 
     def get_preds_and_labels(self, genome):
         phenotype = FeedForwardNet(genome, self)
@@ -87,7 +91,7 @@ class ChessConfig:
 
         predictions = []
         labels = []
-        for input, target in zip(self.inputs, self.targets):  # 4 training examples
+        for input, target in zip(self.inputs, self.targets):
             input, target = input.to(self.DEVICE), target.to(self.DEVICE)
 
             predictions.append(float(phenotype(input)))

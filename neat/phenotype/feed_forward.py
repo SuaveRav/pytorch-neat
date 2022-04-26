@@ -16,7 +16,7 @@ class FeedForwardNet(nn.Module):
         self.units = self.build_units()
         self.lin_modules = nn.ModuleList()
         self.config = config
-        self.activation = a.Activations().get(config.ACTIVATION)
+        # self.activation = a.Activations().get(config.ACTIVATION)
 
         for unit in self.units:
             self.lin_modules.append(unit.linear)
@@ -52,7 +52,8 @@ class FeedForwardNet(nn.Module):
                 linear_module = self.lin_modules[self.units.index(current_unit)]
                 if linear_module is not None:  # TODO: Can this be avoided?
                     scaled = self.config.SCALE_ACTIVATION * linear_module(in_vec)
-                    out = self.activation(scaled)
+                    out = current_unit.ref_node.activation(scaled)
+                    # out = self.activation(scaled)
                 else:
                     out = torch.zeros((1, 1))
 

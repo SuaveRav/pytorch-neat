@@ -2,6 +2,7 @@ import logging
 import random
 
 import neat.utils as utils
+import neat.activations as a
 
 
 logger = logging.getLogger(__name__)
@@ -17,13 +18,21 @@ def mutate(genome, config):
     :return: None
     """
 
-    if utils.rand_uni_val() < config.CONNECTION_MUTATION_RATE:
-        for c_gene in genome.connection_genes:
-            if utils.rand_uni_val() < config.CONNECTION_PERTURBATION_RATE:
-                perturb = utils.rand_uni_val() * random.choice([1, -1])
-                c_gene.weight += perturb
-            else:
-                c_gene.set_rand_weight()
+    # if utils.rand_uni_val() < config.CONNECTION_MUTATION_RATE:
+        # for c_gene in genome.connection_genes:
+        #     if utils.rand_uni_val() < config.CONNECTION_PERTURBATION_RATE:
+        #         perturb = utils.rand_uni_val() * random.choice([1, -1])
+        #         c_gene.weight += perturb
+        #     else:
+        #         c_gene.set_rand_weight()
+
+    if utils.rand_uni_val() < config.ACTIVATION_MUTATION_RATE:
+        activs = a.Activations()
+        for n_gene in genome.node_genes:
+            if utils.rand_uni_val() < config.ACTIVATION_MUTATION_RATE:
+                n_gene.activation = random.choice(
+                    list(activs.functions.values())
+                )
 
     if utils.rand_uni_val() < config.ADD_NODE_MUTATION_RATE:
         genome.add_node_mutation()
