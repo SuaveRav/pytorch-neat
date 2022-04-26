@@ -18,16 +18,6 @@ found_minimal_solution = 0
 avg_num_generations = 0
 min_num_generations = 100000
 
-experiment_folders = os.listdir("./images")
-previous_experiment = int(experiment_folders[-1])
-new_experiment = previous_experiment + 1
-directory = './images/{0}'.format(new_experiment)
-
-fitnesses = []
-def callback_func(fitness):
-    fitnesses.append(fitness)
-
-print("Running Experiment {}".format(new_experiment))
 for i in tqdm(range(1)):
     neat = pop.Population(c.ChessConfig)
     solution, generation, stats = neat.run()
