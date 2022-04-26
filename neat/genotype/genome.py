@@ -3,6 +3,7 @@ import random
 
 from neat.genotype.connection_gene import ConnectionGene
 from neat.genotype.node_gene import NodeGene
+from neat import activations as a
 
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,7 @@ class Genome:
         self.fitness = None
         self.adjusted_fitness = None
         self.species = None
+        self.activs = a.Activations()
 
     def add_connection_mutation(self):
         """
@@ -130,6 +132,7 @@ class Genome:
         new_c_gene = ConnectionGene(in_node_id, out_node_id, is_enabled)
 
         if weight is not None:
+            weight = 1
             new_c_gene.set_weight(float(weight))
 
         self.connection_genes.append(new_c_gene)
@@ -138,9 +141,12 @@ class Genome:
         self.node_ids.add(out_node_id)
         self.innov_nums.add(new_c_gene.innov_num)
 
-    def add_node_gene(self, n_type):
+    def add_node_gene(self, n_type, activation=None):
         new_id = len(self.node_genes)
-        new_gene = NodeGene(new_id, n_type)
+
+        if activation is None:
+            activation = random.choice(list(self.activs.functions.values()))
+        new_gene = NodeGene(new_id, n_type, activation)
         self.node_genes.append(new_gene)
         return new_gene
 
@@ -156,7 +162,7 @@ class Genome:
         self.innov_nums.add(new_c_gene.innov_num)
 
     def add_node_copy(self, copy):
-        self.node_genes.append(NodeGene(copy.id, copy.type))
+        self.node_genes.append(NodeGene(copy.id, copy.type, copy.activation))
 
     def get_connections_in(self, node_id):
         """
