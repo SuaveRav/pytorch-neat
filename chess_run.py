@@ -20,6 +20,7 @@ avg_num_generations = 0
 min_num_generations = 100000
 
 experiment_folders = os.listdir("./images")
+experiment_folders = sorted(experiment_folders)
 previous_experiment = int(experiment_folders[-1])
 new_experiment = previous_experiment + 1
 directory = './images/{0}'.format(new_experiment)
