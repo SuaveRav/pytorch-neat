@@ -7,4 +7,4 @@ class NodeGene:
         self.activation = activation
 
     def __str__(self):
-        return str(self.id) + '-' + self.type + '-' + str(self.activation.__name)
+        return str(self.id) + '-' + self.type + '-' + str(self.activation.__name__)
