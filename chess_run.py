@@ -53,44 +53,41 @@ for i in tqdm(range(1)):
         logger.info("Solution: {}".format(solution))
         logger.info("Generation: {}".format(generation))
 
-        if neat.Config.NUMBER_OF_GENERATIONS > 10:  # Don't write solution for testing
-            # Draw Solution
-            draw_net(solution, view=True, filename='./solutions/KRK/{0}/solution-'.format(new_experiment) + str(num_of_solutions), show_disabled=True)
-            
-            # Write Solution
-            with open('./solutions/KRK/{0}/solution'.format(new_experiment), 'w') as convert_file:
-                convert_file.write(str(solution))
-
-            # Write Fitnesses
-            with open('./solutions/KRK/{0}/fitnesses'.format(new_experiment), 'w') as convert_file:
-                convert_file.write(json.dumps(fitnesses))
-
-            # Write config
-            with open(f'./solutions/KRK/{new_experiment}/config.txt', 'w') as f:
-                lines = [
-                    'CONFIG\n',
-                    f'Activation: {c.ChessConfig.ACTIVATION}\n',
-                    f'Scale Activation: {c.ChessConfig.SCALE_ACTIVATION}\n',
-                    f'Fitness Threshold: {c.ChessConfig.FITNESS_THRESHOLD}\n',
-                    f'Population Size: {c.ChessConfig.POPULATION_SIZE}\n',
-                    f'Number of Generations: {c.ChessConfig.NUMBER_OF_GENERATIONS}\n',
-                    f'Speciation Threshold: {c.ChessConfig.SPECIATION_THRESHOLD}\n',
-                    f'Connection Mutation Rate: {c.ChessConfig.CONNECTION_MUTATION_RATE}\n',
-                    f'Connection Perturbation Rate: {c.ChessConfig.CONNECTION_PERTURBATION_RATE}\n',
-                    f'Activation Mutation Rate: {c.ChessConfig.ACTIVATION_MUTATION_RATE}\n',
-                    f'Add Node Mutation Rate: {c.ChessConfig.ADD_NODE_MUTATION_RATE}\n',
-                    f'Add Connection Mutation Rate: {c.ChessConfig.ADD_CONNECTION_MUTATION_RATE}\n',
-                    f'Crossover Reenable Connection Gene Rate: {c.ChessConfig.CROSSOVER_REENABLE_CONNECTION_GENE_RATE}\n',
-                    f'Percentage to Save: {c.ChessConfig.PERCENTAGE_TO_SAVE}\n',
-                    f'Divide by 8: {c.ChessConfig.NORMALIZE_INPUTS}\n'
-                ]
-
-                f.writelines(lines)
-
+        # Draw Solution
         num_of_solutions += 1
-        logger.info("Solution: {}".format(solution))
-        logger.info("Generation: {}".format(generation))
+        draw_net(solution, view=True, filename='./solutions/KRK/{0}/solution-'.format(new_experiment) + str(num_of_solutions), show_disabled=True)
         
+        # Write Solution
+        with open('./solutions/KRK/{0}/solution'.format(new_experiment), 'w') as convert_file:
+            convert_file.write(str(solution))
+
+        # Write Fitnesses
+        with open('./solutions/KRK/{0}/fitnesses'.format(new_experiment), 'w') as convert_file:
+            convert_file.write(json.dumps(fitnesses))
+
+        # Write config
+        with open(f'./solutions/KRK/{new_experiment}/config.txt', 'w') as f:
+            lines = [
+                'CONFIG\n',
+                f'Activation: {c.ChessConfig.ACTIVATION}\n',
+                f'Scale Activation: {c.ChessConfig.SCALE_ACTIVATION}\n',
+                f'Fitness Threshold: {c.ChessConfig.FITNESS_THRESHOLD}\n',
+                f'Population Size: {c.ChessConfig.POPULATION_SIZE}\n',
+                f'Number of Generations: {c.ChessConfig.NUMBER_OF_GENERATIONS}\n',
+                f'Speciation Threshold: {c.ChessConfig.SPECIATION_THRESHOLD}\n',
+                f'Connection Mutation Rate: {c.ChessConfig.CONNECTION_MUTATION_RATE}\n',
+                f'Connection Perturbation Rate: {c.ChessConfig.CONNECTION_PERTURBATION_RATE}\n',
+                f'Activation Mutation Rate: {c.ChessConfig.ACTIVATION_MUTATION_RATE}\n',
+                f'Add Node Mutation Rate: {c.ChessConfig.ADD_NODE_MUTATION_RATE}\n',
+                f'Add Connection Mutation Rate: {c.ChessConfig.ADD_CONNECTION_MUTATION_RATE}\n',
+                f'Crossover Reenable Connection Gene Rate: {c.ChessConfig.CROSSOVER_REENABLE_CONNECTION_GENE_RATE}\n',
+                f'Percentage to Save: {c.ChessConfig.PERCENTAGE_TO_SAVE}\n',
+                f'Divide by 8: {c.ChessConfig.NORMALIZE_INPUTS}\n'
+            ]
+
+            f.writelines(lines)
+
+        # Test and write results
         best_network = FeedForwardNet(solution, c.ChessConfig)
         results = neat.Config.test(best_network)
 

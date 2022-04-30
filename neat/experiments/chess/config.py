@@ -116,9 +116,9 @@ class ChessConfig:
             target = self.targets_test[i]
             pred = best_network(torch.reshape(input,(1,8)))
             loss = criterion(pred[0], target)
-            losses.append([loss.detach().numpy()])
-            predictions.append(pred[0].detach().numpy())
-        results = self.inputs_test.detach().numpy()
+            losses.append([loss.cpu().numpy()])
+            predictions.append(pred[0].cpu().numpy())
+        results = self.inputs_test.cpu().numpy()
         results = np.hstack((results, losses))
         results = np.hstack((results, predictions))
         return results
