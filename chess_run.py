@@ -1,11 +1,13 @@
 import logging
 import os
 import json
+import pandas as pd
 
 import neat.population as pop
 import neat.experiments.chess.config as c
 from neat.visualize import draw_net
 from tqdm import tqdm
+from neat.phenotype.feed_forward import FeedForwardNet
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +22,7 @@ avg_num_generations = 0
 min_num_generations = 100000
 
 experiment_folders = os.listdir("./images")
+experiment_folders = [int(i) for i in experiment_folders]
 experiment_folders = sorted(experiment_folders)
 previous_experiment = int(experiment_folders[-1])
 new_experiment = previous_experiment + 1
@@ -54,6 +57,12 @@ for i in tqdm(range(1)):
             convert_file.write(json.dumps(fitnesses))
         logger.info("Solution: {}".format(solution))
         logger.info("Generation: {}".format(generation))
+        
+        best_network = FeedForwardNet(solution, c.ChessConfig)
+        results = neat.Config.test(best_network)
+        results_df = pd.DataFrame(results, columns=['white queen height', 'white queen width', 'white king height', 
+        'white king width', 'black queen height', 'black queen width', 'black king height', 'black king width', 'loss', 'prediction'])
+        results_df.to_csv('./images/{0}/test_results.csv'.format(new_experiment))
 
 logger.info('Total Number of Solutions: {}'.format(num_of_solutions))
 logger.info('Average Number of Hidden Nodes in a Solution {}'.format(avg_num_hidden_nodes))
