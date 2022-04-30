@@ -36,7 +36,7 @@ print("Running Experiment {}".format(new_experiment))
 for i in tqdm(range(1)):
     neat = pop.Population(c.ChessConfig)
     logger.info(f'Max Generations: {neat.Config.NUMBER_OF_GENERATIONS}')
-    solution, generation, stats = neat.run()
+    solution, generation, fitnesses = neat.run()
 
     if solution is not None:
         os.mkdir(directory)
@@ -105,7 +105,7 @@ for i in tqdm(range(1)):
         ]
 
         results_df = pd.DataFrame(results, columns=col_names)
-        results_df.to_csv('./solutions/KRK/{0}/test_results.csv'.format(new_experiment))
+        results_df.to_csv('./solutions/KRK/{0}/test_results.csv'.format(new_experiment), index=False)
 
 logger.info('Total Number of Solutions: {}'.format(num_of_solutions))
 logger.info('Average Number of Hidden Nodes in a Solution {}'.format(avg_num_hidden_nodes))

@@ -28,7 +28,7 @@ class ChessConfig:
     FITNESS_THRESHOLD = 1950
 
     POPULATION_SIZE = 250
-    NUMBER_OF_GENERATIONS = 10
+    NUMBER_OF_GENERATIONS = 2
     SPECIATION_THRESHOLD = 3.0
 
     CONNECTION_MUTATION_RATE = 0.80
@@ -56,9 +56,9 @@ class ChessConfig:
     np_rng.shuffle(data)
 
     data_proportion = 2000
-    data = data[:data_proportion]
+    data_train = data[:data_proportion]
 
-    for d in data:
+    for d in data_train:
         if NORMALIZE_INPUTS:
             d_in = np.array(d[0] / 8)
         else:
@@ -116,9 +116,10 @@ class ChessConfig:
             target = self.targets_test[i]
             pred = best_network(torch.reshape(input,(1,8)))
             loss = criterion(pred[0], target)
-            losses.append([loss.cpu().numpy()])
-            predictions.append(pred[0].cpu().numpy())
-        results = self.inputs_test.cpu().numpy()
+            losses.append([loss.detach().cpu().numpy()])
+            predictions.append(pred[0].detach().cpu().numpy())
+
+        results = self.inputs_test.detach().cpu().numpy()
         results = np.hstack((results, losses))
         results = np.hstack((results, predictions))
         return results
