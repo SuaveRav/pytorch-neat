@@ -132,7 +132,7 @@ class Genome:
         new_c_gene = ConnectionGene(in_node_id, out_node_id, is_enabled)
 
         if weight is not None:
-            weight = 1
+            weight = 1  # WANN
             new_c_gene.set_weight(float(weight))
 
         self.connection_genes.append(new_c_gene)

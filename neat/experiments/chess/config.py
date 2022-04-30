@@ -22,24 +22,26 @@ class ChessConfig:
     NUM_OUTPUTS = 1
     USE_BIAS = True
 
-    ACTIVATION = 'wann (sigmoid, tanh, relu, tanhshrink, logsigmoid, negate)'
+    ACTIVATION = 'wann'
     SCALE_ACTIVATION = 1
 
     FITNESS_THRESHOLD = 1950
 
-    POPULATION_SIZE = 150
-    NUMBER_OF_GENERATIONS = 35
+    POPULATION_SIZE = 250
+    NUMBER_OF_GENERATIONS = 150
     SPECIATION_THRESHOLD = 3.0
 
     CONNECTION_MUTATION_RATE = 0.80
     CONNECTION_PERTURBATION_RATE = 0.90
     ACTIVATION_MUTATION_RATE = 0.2
-    ADD_NODE_MUTATION_RATE = 0.2
-    ADD_CONNECTION_MUTATION_RATE = 0.6
+    ADD_NODE_MUTATION_RATE = 0.1
+    ADD_CONNECTION_MUTATION_RATE = 0.5
 
     CROSSOVER_REENABLE_CONNECTION_GENE_RATE = 0.25
 
     PERCENTAGE_TO_SAVE = 0.3  # Top percentage of species to be saved before mating
+
+    NORMALIZE_INPUTS = True
 
     # Load Data
     print("Loading chess data")
@@ -52,36 +54,35 @@ class ChessConfig:
     outputs_list = []
 
     np_rng.shuffle(data)
-    data = data[:2000]
+
+    data_proportion = 2000
+    data = data[:data_proportion]
 
     for d in data:
-        d_in = np.array(d[0]) / 8
+        if NORMALIZE_INPUTS:
+            d_in = np.array(d[0] / 8)
+        else:
+            d_in = np.array(d[0])
         # condensed_input = np.argmax(d_in.reshape(4, 64), axis=1)
         inputs_list.append(d_in)
         outputs_list.append(d[1])
 
-    inputs = list(map(lambda s: autograd.Variable(torch.Tensor([s])), inputs_list))
-    targets = list(map(lambda s: autograd.Variable(torch.Tensor([s])), outputs_list))
+    inputs = torch.tensor(np.array(inputs_list)).to(DEVICE)
+    targets = torch.tensor(np.array(outputs_list)).reshape(-1, 1).to(DEVICE)
 
 
     def fitness_fn(self, genome):
-        fitness = 2000  # Max fitness
+        fitness = self.data_proportion  # Max fitness
 
         phenotype = FeedForwardNet(genome, self)
         phenotype.to(self.DEVICE)
         criterion = nn.MSELoss()
         num_inputs = len(self.inputs)
 
-        for input, target in zip(self.inputs, self.targets):
-            input, target = input.to(self.DEVICE), target.to(self.DEVICE)
+        pred = phenotype(self.inputs)
+        loss = criterion(pred, self.targets)
 
-            pred = phenotype(input)
-            loss = (float(pred) - float(target)) ** 2
-            loss = float(loss)
-            # loss = criterion(pred, target)
-            # logger.info("Loss: {}".format(loss))
-            fitness -= loss
-            # logger.info("Fitness: {}".format(fitness))
+        fitness -= self.data_proportion * loss.item()
 
         return fitness
 

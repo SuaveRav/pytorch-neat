@@ -21,7 +21,7 @@ class ConnectionGene:
         :return: None
         """
         # self.weight = torch.Tensor([new_weight]).to(device)
-        self.weight = torch.Tensor([float(1)]).to(device)
+        self.weight = torch.Tensor([float(1)]).to(device)  # WANN
 
     def set_rand_weight(self):
         """
@@ -29,7 +29,7 @@ class ConnectionGene:
         :return: None - modifies object
         """
         # self.weight = torch.Tensor(torch.normal(torch.arange(0, 1).float())).to(device)
-        self.weight = torch.Tensor([float(1)]).to(device)
+        self.weight = torch.Tensor([float(1)]).to(device)  # WANN
 
     def set_innov_num(self, num):
         """
