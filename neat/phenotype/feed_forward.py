@@ -31,7 +31,7 @@ class FeedForwardNet(nn.Module):
         batch_size = x.size(0)
         # Set input values
         for u in input_units:
-            outputs[u.ref_node.id] = x[:, u.ref_node.id]
+            outputs[u.ref_node.id] = x[:,u.ref_node.id]
 
         # Set bias value
         for u in bias_units:
@@ -47,7 +47,7 @@ class FeedForwardNet(nn.Module):
                 in_vec = autograd.Variable(torch.zeros((batch_size, len(inputs_ids)), device=device, requires_grad=True))
 
                 for i, input_id in enumerate(inputs_ids):
-                    in_vec[:, i] = outputs[input_id]
+                    in_vec[:,i] = outputs[input_id]
 
                 # Compute output of current node
                 linear_module = self.lin_modules[self.units.index(current_unit)]
@@ -64,7 +64,7 @@ class FeedForwardNet(nn.Module):
         # Build output vector
         output = autograd.Variable(torch.zeros((batch_size, len(output_units)), device=device, requires_grad=True))
         for i, u in enumerate(output_units):
-            output[:, i] = outputs[u.ref_node.id]
+            output[:,i] = outputs[u.ref_node.id]
         return output
 
     def build_units(self):

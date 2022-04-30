@@ -28,7 +28,7 @@ class ChessConfig:
     FITNESS_THRESHOLD = 1950
 
     POPULATION_SIZE = 250
-    NUMBER_OF_GENERATIONS = 150
+    NUMBER_OF_GENERATIONS = 10
     SPECIATION_THRESHOLD = 3.0
 
     CONNECTION_MUTATION_RATE = 0.80
@@ -69,8 +69,27 @@ class ChessConfig:
 
     inputs = torch.tensor(np.array(inputs_list)).to(DEVICE)
     targets = torch.tensor(np.array(outputs_list)).reshape(-1, 1).to(DEVICE)
+    
+    # Testing Data
+    inputs_list_test = []
+    outputs_list_test = []
 
+    data_proportion_test = 2000
+    data_proportion_test = data_proportion + data_proportion_test
+    data_test = data[data_proportion:data_proportion_test]
 
+    for d in data_test:
+        if NORMALIZE_INPUTS:
+            d_in = np.array(d[0] / 8)
+        else:
+            d_in = np.array(d[0])
+        # condensed_input = np.argmax(d_in.reshape(4, 64), axis=1)
+        inputs_list_test.append(d_in)
+        outputs_list_test.append(d[1])
+
+    inputs_test = torch.tensor(np.array(inputs_list_test)).to(DEVICE)
+    targets_test = torch.tensor(np.array(outputs_list_test)).reshape(-1, 1).to(DEVICE)
+        
     def fitness_fn(self, genome):
         fitness = self.data_proportion  # Max fitness
 
@@ -85,6 +104,24 @@ class ChessConfig:
         fitness -= self.data_proportion * loss.item()
 
         return fitness
+
+    def test(self, best_network):
+        best_network.to(self.DEVICE)
+        criterion = nn.MSELoss()
+        predictions = []
+        losses = []
+
+        for i in range(len(self.inputs_test)):
+            input = self.inputs_test[i]
+            target = self.targets_test[i]
+            pred = best_network(torch.reshape(input,(1,8)))
+            loss = criterion(pred[0], target)
+            losses.append([loss.detach().numpy()])
+            predictions.append(pred[0].detach().numpy())
+        results = self.inputs_test.detach().numpy()
+        results = np.hstack((results, losses))
+        results = np.hstack((results, predictions))
+        return results
 
 
     def get_preds_and_labels(self, genome):
