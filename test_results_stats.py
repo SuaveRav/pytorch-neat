@@ -7,6 +7,16 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn.neural_network import MLPClassifier
 
+def categorize_label(outputs_list):
+    new_outputs = []
+    for target in outputs_list:
+        if target == 0.0:
+            new_outputs.append(0)
+        if target == .5:
+            new_outputs.append(1)
+        if target == 1.0:
+            new_outputs.append(2)
+    return new_outputs
 
 with open("./data/KQK/indices", "rb") as f:
     data = pickle.load(f)
@@ -43,6 +53,7 @@ def win_lose_or_draw(prediction):
 
 correct_predictions = 0
 
+actual_predictions = []
 for index, row in test_results.iterrows():
     prediction_idx = win_lose_or_draw(row['prediction'])
     if prediction_idx == 0:
@@ -51,29 +62,19 @@ for index, row in test_results.iterrows():
         prediction = .5
     if prediction_idx == 2:
         prediction = 0.0
+    actual_predictions.append(prediction)
     truth_label = row['label']
 
     if prediction == truth_label:
         correct_predictions += 1
 
 print("Overall WANN Accuracy: {}".format(correct_predictions / 2000))
-
+print("WANN Confusion Matrix: {}".format(confusion_matrix(categorize_label(outputs_list_test), categorize_label(actual_predictions))))
 
 clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(8, 8), random_state=1)
-
-
-def categorize_label(outputs_list):
-    new_outputs = []
-    for target in outputs_list:
-        if target == 0.0:
-            new_outputs.append(0)
-        if target == .5:
-            new_outputs.append(1)
-        if target == 1.0:
-            new_outputs.append(2)
-    return new_outputs
 
 clf.fit(inputs_list, categorize_label(outputs_list))
 predictions = clf.predict(inputs_list_test)
 print("Sklearn Network Accuracy: {}".format(accuracy_score(categorize_label(outputs_list_test), predictions)))
+print("Sklearn Confusion Matrix: {}".format(confusion_matrix(categorize_label(outputs_list_test), predictions)))
 
