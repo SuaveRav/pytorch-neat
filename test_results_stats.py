@@ -89,24 +89,4 @@ for scenario in scenarios:
     print("Overall WANN Accuracy: {}".format(correct_predictions / 2000))
     print("WANN Fitness: {}".format(2000 * (1 - average_loss)))
     print("WANN Confusion Matrix: \n{}".format(confusion_matrix(categorize_label(outputs_list_test), categorize_label(actual_predictions))))
-
-    results[scenario]['Accuracy WANN'] = correct_predictions / 2000
-    results[scenario]['Confusion Matrix WANN'] = confusion_matrix(categorize_label(outputs_list_test), categorize_label(actual_predictions)).tolist()
-
-    clf = MLPClassifier(solver='sgd', alpha=1e-5, hidden_layer_sizes=(8, 4, 1), random_state=1)
-
-    clf.fit(inputs_list, categorize_label(outputs_list))
-    weights = clf.coefs_
-    print(sum(len(row) for row in weights))
-    predictions = clf.predict(inputs_list_test)
-    print("Sklearn Network Accuracy: {}".format(accuracy_score(categorize_label(outputs_list_test), predictions)))
-    print("Sklearn Confusion Matrix: \n{}".format(confusion_matrix(categorize_label(outputs_list_test), predictions)))
     print("")
-    results[scenario]['Accuracy Sklearn NN'] = accuracy_score(categorize_label(outputs_list_test), predictions)
-    results[scenario]['Confusion Matrix Sklearn NN'] = confusion_matrix(categorize_label(outputs_list_test), predictions).tolist()
-
-# print(results)
-with open('./results.json', 'w') as convert_file:
-    convert_file.write(json.dumps(results))
-
-    
