@@ -16,7 +16,7 @@ class FeedForwardNet(nn.Module):
         self.units = self.build_units()
         self.lin_modules = nn.ModuleList()
         self.config = config
-        self.activation = a.Activations().get(config.ACTIVATION)
+        # self.activation = a.Activations().get(config.ACTIVATION)
 
         for unit in self.units:
             self.lin_modules.append(unit.linear)
@@ -28,13 +28,14 @@ class FeedForwardNet(nn.Module):
         bias_units = [u for u in self.units if u.ref_node.type == 'bias']
         stacked_units = self.genome.order_units(self.units)
 
+        batch_size = x.size(0)
         # Set input values
         for u in input_units:
-            outputs[u.ref_node.id] = x[0][u.ref_node.id]
+            outputs[u.ref_node.id] = x[:,u.ref_node.id]
 
         # Set bias value
         for u in bias_units:
-            outputs[u.ref_node.id] = torch.ones((1, 1)).to(device)[0][0]
+            outputs[u.ref_node.id] = torch.ones(batch_size).to(device)
 
         # Compute through directed topology
         while len(stacked_units) > 0:
@@ -43,26 +44,27 @@ class FeedForwardNet(nn.Module):
             if current_unit.ref_node.type != 'input' and current_unit.ref_node.type != 'bias':
                 # Build input vector to current node
                 inputs_ids = self.genome.get_inputs_ids(current_unit.ref_node.id)
-                in_vec = autograd.Variable(torch.zeros((1, len(inputs_ids)), device=device, requires_grad=True))
+                in_vec = autograd.Variable(torch.zeros((batch_size, len(inputs_ids)), device=device, requires_grad=True))
 
                 for i, input_id in enumerate(inputs_ids):
-                    in_vec[0][i] = outputs[input_id]
+                    in_vec[:,i] = outputs[input_id]
 
                 # Compute output of current node
                 linear_module = self.lin_modules[self.units.index(current_unit)]
                 if linear_module is not None:  # TODO: Can this be avoided?
                     scaled = self.config.SCALE_ACTIVATION * linear_module(in_vec)
-                    out = self.activation(scaled)
+                    out = current_unit.ref_node.activation(scaled).reshape(-1)
+                    # out = self.activation(scaled)
                 else:
-                    out = torch.zeros((1, 1))
+                    out = torch.zeros(batch_size)
 
                 # Add to outputs dictionary
                 outputs[current_unit.ref_node.id] = out
 
         # Build output vector
-        output = autograd.Variable(torch.zeros((1, len(output_units)), device=device, requires_grad=True))
+        output = autograd.Variable(torch.zeros((batch_size, len(output_units)), device=device, requires_grad=True))
         for i, u in enumerate(output_units):
-            output[0][i] = outputs[u.ref_node.id]
+            output[:,i] = outputs[u.ref_node.id]
         return output
 
     def build_units(self):
